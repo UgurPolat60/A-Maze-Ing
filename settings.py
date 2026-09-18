@@ -1,3 +1,6 @@
+DEFAULT_SEED_RANGE = 99999
+
+
 class MazeSettings:
     def __init__(
         self,
