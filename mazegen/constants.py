@@ -1,3 +1,5 @@
+"""Wall bits and direction tables."""
+
 from typing import Final
 
 

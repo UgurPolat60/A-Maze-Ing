@@ -1,7 +1,10 @@
 DEFAULT_SEED_RANGE = 99999
+MIN_LOOPS = 2
 
 
 class MazeSettings:
+    """Validated parameters of a maze."""
+
     def __init__(
         self,
         width: int,
@@ -11,6 +14,19 @@ class MazeSettings:
         perfect: bool = False,
         seed: int | None = None,
     ) -> None:
+        """Check and store the parameters.
+
+        Args:
+            width: Number of columns.
+            height: Number of rows.
+            entry: Entry cell (x, y).
+            exit: Exit cell (x, y).
+            perfect: True for a perfect maze, False for a Pac-Man board.
+            seed: Random seed, None to choose one.
+
+        Raises:
+            ValueError: If a parameter is invalid.
+        """
         if width <= 0 or height <= 0:
             raise ValueError("Enter valid values")
         for name, position in (("Entrance", entry), ("ExitLocation", exit),):
