@@ -14,7 +14,17 @@ class ValidationError(Exception):
 def validate_config(
     config: dict[str, typing.Any],
 ) -> tuple[MazeSettings, str]:
-    """Validate parsed values and create generator settings."""
+    """Check the config and create maze settings.
+
+    Args:
+        config: Values read from the config file.
+
+    Returns:
+        Maze settings and output filename.
+
+    Raises:
+        ValidationError: If a value is missing or invalid.
+    """
     try:
         width = config["WIDTH"]
         height = config["HEIGHT"]
@@ -49,7 +59,14 @@ def validate_config(
 
 
 def _validate_grid(maze: Maze) -> None:
-    """Validate dimensions, values, borders and matching shared walls."""
+    """Check the grid, outside borders and shared walls.
+
+    Args:
+        maze: Maze to check.
+
+    Raises:
+        ValidationError: If the grid or a wall is invalid.
+    """
     if len(maze.grid) != maze.height:
         raise ValidationError("Maze grid has an invalid height")
     if any(len(row) != maze.width for row in maze.grid):
@@ -80,7 +97,14 @@ def _validate_grid(maze: Maze) -> None:
 
 
 def _reachable(maze: Maze) -> set[tuple[int, int]]:
-    """Return every corridor cell reachable from the entry."""
+    """Find all cells that can be reached from the entry.
+
+    Args:
+        maze: Maze to search.
+
+    Returns:
+        Cells reachable from the entry.
+    """
     reached = {maze.entry}
     queue: deque[tuple[int, int]] = deque([maze.entry])
     while queue:
@@ -96,7 +120,14 @@ def _reachable(maze: Maze) -> set[tuple[int, int]]:
 
 
 def _count_edges(maze: Maze) -> int:
-    """Count passages between cells once."""
+    """Count passages between cells once.
+
+    Args:
+        maze: Maze to check.
+
+    Returns:
+        Number of open connections.
+    """
     edges = 0
     for y in range(maze.height):
         for x in range(maze.width):
@@ -108,7 +139,14 @@ def _count_edges(maze: Maze) -> int:
 
 
 def _has_open_area(maze: Maze) -> bool:
-    """Return True if the maze contains a fully open 3 by 3 area."""
+    """Check whether the maze contains a fully open 3 by 3 area.
+
+    Args:
+        maze: Maze to check.
+
+    Returns:
+        True if a fully open 3 by 3 area exists, otherwise False.
+    """
     for top in range(maze.height - 2):
         for left in range(maze.width - 2):
             is_open = True
@@ -124,7 +162,15 @@ def _has_open_area(maze: Maze) -> bool:
 
 
 def validate_maze(maze: Maze, perfect: bool) -> None:
-    """Validate the mandatory structural rules of a generated maze."""
+    """Check that a generated maze follows the required rules.
+
+    Args:
+        maze: Maze to check.
+        perfect: True if the maze must not have loops.
+
+    Raises:
+        ValidationError: If the maze breaks a rule.
+    """
     _validate_grid(maze)
     if maze.entry == maze.exit:
         raise ValidationError("Entry and exit cannot be the same")

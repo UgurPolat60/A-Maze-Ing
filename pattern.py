@@ -15,7 +15,16 @@ def create_pattern(
     height: int,
     blocked: set[tuple[int, int]] | None = None,
 ) -> set[tuple[int, int]]:
-    """Return a centred 42 pattern, or an empty set if it cannot fit."""
+    """Create the 42 pattern inside the maze.
+
+    Args:
+        width: Maze width.
+        height: Maze height.
+        blocked: Cells that cannot be part of the pattern.
+
+    Returns:
+        Pattern cells, or an empty set if the pattern cannot fit.
+    """
     pattern_width = len(PATTERN[0])
     pattern_height = len(PATTERN)
     if width < pattern_width + 2 or height < pattern_height + 2:

@@ -14,6 +14,12 @@ class Controller:
     """Keep the current maze and handle user commands."""
 
     def __init__(self, settings: MazeSettings, output_file: str) -> None:
+        """Set up the controller.
+
+        Args:
+            settings: Settings to use for maze generation.
+            output_file: File to save the maze in.
+        """
         self.settings = settings
         self.output_file = output_file
         self.view = AsciiView()
@@ -23,7 +29,16 @@ class Controller:
         self.seed = settings.seed
 
     def generate(self, new_seed: bool = False) -> None:
-        """Generate, validate and save a maze."""
+        """Generate, validate and save a maze.
+
+        Args:
+            new_seed: Generate with a new seed when True.
+
+        Raises:
+            ValueError: If generation fails.
+            ValidationError: If the maze is invalid.
+            FileWriteError: If the output cannot be saved.
+        """
         if new_seed or self.seed is None:
             self.seed = randint(0, DEFAULT_SEED_RANGE)
         settings = MazeSettings(
@@ -56,7 +71,7 @@ class Controller:
         print("[R]egenerate  [P]ath  [C]olour  [Q]uit")
 
     def run(self) -> None:
-        """Start the terminal interaction loop."""
+        """Generate the first maze and start the interaction loop."""
         self.generate()
         while True:
             self.display()

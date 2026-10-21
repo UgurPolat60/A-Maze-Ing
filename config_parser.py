@@ -23,7 +23,18 @@ REQUIRED_KEYS: set[str] = {
 
 
 def val_type(input_type: type, check_value: str) -> typing.Any:
-    """Convert one configuration value to the requested type."""
+    """Convert one configuration value to the requested type.
+
+    Args:
+        input_type: Type to convert the value to.
+        check_value: Value to convert.
+
+    Returns:
+        Converted value.
+
+    Raises:
+        ConfigError: If the conversion fails.
+    """
     if input_type is int:
         try:
             return int(check_value)
@@ -55,7 +66,17 @@ def val_type(input_type: type, check_value: str) -> typing.Any:
 
 
 def config_parser(path: str) -> dict[str, typing.Any]:
-    """Read a KEY=VALUE configuration file."""
+    """Read a KEY=VALUE configuration file.
+
+    Args:
+        path: Config file to read.
+
+    Returns:
+        Parsed config values.
+
+    Raises:
+        ConfigError: If the file cannot be read or contains bad input.
+    """
     config: dict[str, typing.Any] = {}
     try:
         with open(path, "r", encoding="utf-8") as f:

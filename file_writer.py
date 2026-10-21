@@ -14,14 +14,14 @@ def write_maze(
     output_file: str,
 ) -> None:
     """Write the grid, entry, exit and solution to a file.
-    
+
     Args:
         maze: The maze to write.
         path: The path to write.
         output_file: File path to write to.
 
     Raises:
-        FileWriteError if maze is invalid or it cannot write to file
+        FileWriteError: If the maze is invalid or the file cannot be written.
     """
     if not path or path[0] != maze.entry or path[-1] != maze.exit:
         raise FileWriteError("Cannot write maze without a valid solution")

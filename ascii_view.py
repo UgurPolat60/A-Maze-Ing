@@ -29,6 +29,7 @@ class AsciiView:
     """Render a maze using two full blocks for every pixel."""
 
     def __init__(self) -> None:
+        """Create a view using the first available wall color."""
         self.color_index = 0
 
     def change_color(self) -> None:
@@ -42,12 +43,24 @@ class AsciiView:
         y: int,
         value: int,
     ) -> None:
-        """Put a pixel on the canvas if it has higher priority."""
+        """Put a value on the canvas based on its priority.
+
+        Args:
+            canvas: Canvas to draw on.
+            x: Horizontal position.
+            y: Vertical position.
+            value: Value to put on the canvas.
+        """
         if value >= canvas[y][x]:
             canvas[y][x] = value
 
     def _draw_walls(self, maze: Maze, canvas: list[list[int]]) -> None:
-        """Draw all walls and intersections."""
+        """Draw all walls and intersections.
+
+        Args:
+            maze: Maze to draw.
+            canvas: Canvas to draw on.
+        """
         for y in range(maze.height + 1):
             for x in range(maze.width + 1):
                 self._put(canvas, x * 2, y * 2, WALL)
@@ -64,7 +77,12 @@ class AsciiView:
                     self._put(canvas, 0, y * 2 + 1, WALL)
 
     def _draw_pattern(self, maze: Maze, canvas: list[list[int]]) -> None:
-        """Fill the centre of every closed pattern cell."""
+        """Fill the center of every 42 pattern cell.
+
+        Args:
+            maze: Maze containing the 42 pattern.
+            canvas: Canvas to draw on.
+        """
         for x, y in maze.pattern:
             self._put(canvas, x * 2 + 1, y * 2 + 1, PATTERN_BLOCK)
 
@@ -73,7 +91,12 @@ class AsciiView:
         path: list[tuple[int, int]],
         canvas: list[list[int]],
     ) -> None:
-        """Draw cells and the openings connecting every path step."""
+        """Draw cells and the openings connecting every path step.
+
+        Args:
+            path: Path from the entry to the exit.
+            canvas: Canvas to draw on.
+        """
         for index, (x, y) in enumerate(path):
             cx = x * 2 + 1
             cy = y * 2 + 1
@@ -91,7 +114,14 @@ class AsciiView:
             )
 
     def _pixel(self, value: int) -> str:
-        """Convert one canvas value to a colored terminal pixel."""
+        """Convert a canvas value to colored text.
+
+        Args:
+            value: Canvas value to convert.
+
+        Returns:
+            Two characters with the correct color.
+        """
         if value == EMPTY:
             return "  "
         if value == WALL:
@@ -109,7 +139,15 @@ class AsciiView:
         maze: Maze,
         path: list[tuple[int, int]] | None = None,
     ) -> str:
-        """Return the complete coloured maze as a string."""
+        """Turn the maze into a string for the terminal.
+
+        Args:
+            maze: Maze to render.
+            path: Path to display, or None to hide it.
+
+        Returns:
+            Colored maze ready to be printed.
+        """
         canvas_width = maze.width * 2 + 1
         canvas_height = maze.height * 2 + 1
         canvas = [
@@ -139,7 +177,10 @@ class AsciiView:
         maze: Maze,
         path: list[tuple[int, int]] | None = None,
     ) -> None:
-        """Display the maze.
+        """Print the maze in the terminal.
+
         Args:
-            maze: The maze to be displayed."""
+            maze: Maze to display.
+            path: Optional solution path to display.
+        """
         print(self.render(maze, path))

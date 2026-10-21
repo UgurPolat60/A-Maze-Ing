@@ -9,7 +9,12 @@ from validator import ValidationError, validate_config
 
 
 def main() -> int:
-    """Read the configuration and start the maze controller."""
+    """Read the configuration and start the maze controller.
+
+    Returns:
+        Zero when the program finishes successfully,
+        One if anything goes wrong.
+    """
     if len(sys.argv) != 2:
         print("Usage: python3 a_maze_ing.py <config.txt>")
         return 1
