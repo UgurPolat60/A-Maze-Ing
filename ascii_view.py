@@ -1,4 +1,4 @@
-"""Display a maze in the terminal with square full-block pixels."""
+"""Display a maze in the terminal."""
 
 from mazegen import Maze
 from mazegen.constants import EAST, SOUTH
@@ -26,13 +26,13 @@ EXIT = 5
 
 
 class AsciiView:
-    """Render a maze using two full blocks for every logical pixel."""
+    """Render a maze using two full blocks for every pixel."""
 
     def __init__(self) -> None:
         self.color_index = 0
 
     def change_color(self) -> None:
-        """Select the next wall colour."""
+        """Select the next wall color."""
         self.color_index = (self.color_index + 1) % len(COLORS)
 
     def _put(
@@ -91,7 +91,7 @@ class AsciiView:
             )
 
     def _pixel(self, value: int) -> str:
-        """Convert one canvas value to a coloured terminal pixel."""
+        """Convert one canvas value to a colored terminal pixel."""
         if value == EMPTY:
             return "  "
         if value == WALL:
@@ -139,5 +139,7 @@ class AsciiView:
         maze: Maze,
         path: list[tuple[int, int]] | None = None,
     ) -> None:
-        """Print the maze to the terminal."""
+        """Display the maze.
+        Args:
+            maze: The maze to be displayed."""
         print(self.render(maze, path))
