@@ -9,6 +9,13 @@ PATTERN: tuple[str, ...] = (
     "0010111",
 )
 
+PATTERN_CELLS = {
+    (x, y)
+    for y, row in enumerate(PATTERN)
+    for x, value in enumerate(row)
+    if value == "1"
+}
+
 
 def create_pattern(
     width: int,
@@ -49,13 +56,14 @@ def create_pattern(
     )
 
     for left, top in positions:
-        cells: set[tuple[int, int]] = set()
-        for y, row in enumerate(PATTERN):
-            for x, value in enumerate(row):
-                if value == "1":
-                    cells.add((left + x, top + y))
-        if not cells & blocked:
-            return cells
+        overlaps = any(
+            (left + x, top + y) in blocked for x, y in PATTERN_CELLS
+        )
+        if not overlaps:
+            return {
+                (left + x, top + y)
+                for x, y in PATTERN_CELLS
+            }
 
     print("Warning: entry and exit leave no room for the 42 pattern")
     return set()
