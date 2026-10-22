@@ -1,7 +1,7 @@
 """Validate configuration values and generated maze structures."""
 
-import typing
 from collections import deque
+from typing import Any
 
 from mazegen import Maze, MazeSettings
 from mazegen.constants import EAST, NORTH, SOUTH, WEST
@@ -12,7 +12,7 @@ class ValidationError(Exception):
 
 
 def validate_config(
-    config: dict[str, typing.Any],
+    config: dict[str, Any],
 ) -> tuple[MazeSettings, str]:
     """Check the config and create maze settings.
 
@@ -55,7 +55,7 @@ def validate_config(
         )
     except (TypeError, ValueError) as e:
         raise ValidationError(str(e)) from e
-    return (settings, output_file)
+    return settings, output_file
 
 
 def _validate_grid(maze: Maze) -> None:
@@ -69,8 +69,9 @@ def _validate_grid(maze: Maze) -> None:
     """
     if len(maze.grid) != maze.height:
         raise ValidationError("Maze grid has an invalid height")
-    if any(len(row) != maze.width for row in maze.grid):
-        raise ValidationError("Maze grid has an invalid width")
+    for row in maze.grid:
+        if len(row) != maze.width:
+            raise ValidationError("Maze grid has an invalid width")
 
     for y, row in enumerate(maze.grid):
         for x, cell in enumerate(row):
@@ -105,7 +106,7 @@ def _reachable(maze: Maze) -> set[tuple[int, int]]:
     Returns:
         Cells reachable from the entry.
     """
-    reached = {maze.entry}
+    reached: set[tuple[int, int]] = {maze.entry}
     queue: deque[tuple[int, int]] = deque([maze.entry])
     while queue:
         x, y = queue.popleft()
@@ -132,9 +133,9 @@ def _count_edges(maze: Maze) -> int:
     for y in range(maze.height):
         for x in range(maze.width):
             if x + 1 < maze.width and not maze.is_wall(x, y, EAST):
-                edges = edges + 1
+                edges += 1
             if y + 1 < maze.height and not maze.is_wall(x, y, SOUTH):
-                edges = edges + 1
+                edges += 1
     return edges
 
 
@@ -183,12 +184,11 @@ def validate_maze(maze: Maze, perfect: bool) -> None:
         if maze.grid[y][x] != 15:
             raise ValidationError("42 pattern cells must be fully closed")
 
-    expected = {
-        (x, y)
-        for y in range(maze.height)
-        for x in range(maze.width)
-        if (x, y) not in maze.pattern
-    }
+    expected: set[tuple[int, int]] = set()
+    for y in range(maze.height):
+        for x in range(maze.width):
+            if (x, y) not in maze.pattern:
+                expected.add((x, y))
     reached = _reachable(maze)
     if reached != expected:
         raise ValidationError("Not every corridor is reachable")
@@ -202,7 +202,7 @@ def validate_maze(maze: Maze, perfect: bool) -> None:
         raise ValidationError("Non-perfect maze needs at least two loops")
 
     if not perfect:
-        important = {
+        important: set[tuple[int, int]] = {
             (0, 0),
             (maze.width - 1, 0),
             (0, maze.height - 1),

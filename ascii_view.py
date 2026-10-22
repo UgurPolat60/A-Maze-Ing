@@ -36,24 +36,6 @@ class AsciiView:
         """Select the next wall color."""
         self.color_index = (self.color_index + 1) % len(COLORS)
 
-    def _put(
-        self,
-        canvas: list[list[int]],
-        x: int,
-        y: int,
-        value: int,
-    ) -> None:
-        """Put a value on the canvas based on its priority.
-
-        Args:
-            canvas: Canvas to draw on.
-            x: Horizontal position.
-            y: Vertical position.
-            value: Value to put on the canvas.
-        """
-        if value >= canvas[y][x]:
-            canvas[y][x] = value
-
     def _draw_walls(self, maze: Maze, canvas: list[list[int]]) -> None:
         """Draw all walls and intersections.
 
@@ -63,18 +45,18 @@ class AsciiView:
         """
         for y in range(maze.height + 1):
             for x in range(maze.width + 1):
-                self._put(canvas, x * 2, y * 2, WALL)
+                canvas[y * 2][x * 2] = WALL
 
         for y in range(maze.height):
             for x in range(maze.width):
                 if maze.is_wall(x, y, EAST):
-                    self._put(canvas, x * 2 + 2, y * 2 + 1, WALL)
+                    canvas[y * 2 + 1][x * 2 + 2] = WALL
                 if maze.is_wall(x, y, SOUTH):
-                    self._put(canvas, x * 2 + 1, y * 2 + 2, WALL)
+                    canvas[y * 2 + 2][x * 2 + 1] = WALL
                 if y == 0:
-                    self._put(canvas, x * 2 + 1, 0, WALL)
+                    canvas[0][x * 2 + 1] = WALL
                 if x == 0:
-                    self._put(canvas, 0, y * 2 + 1, WALL)
+                    canvas[y * 2 + 1][0] = WALL
 
     def _draw_pattern(self, maze: Maze, canvas: list[list[int]]) -> None:
         """Fill the center of every 42 pattern cell.
@@ -84,7 +66,7 @@ class AsciiView:
             canvas: Canvas to draw on.
         """
         for x, y in maze.pattern:
-            self._put(canvas, x * 2 + 1, y * 2 + 1, PATTERN_BLOCK)
+            canvas[y * 2 + 1][x * 2 + 1] = PATTERN_BLOCK
 
     def _draw_path(
         self,
@@ -97,21 +79,15 @@ class AsciiView:
             path: Path from the entry to the exit.
             canvas: Canvas to draw on.
         """
-        for index, (x, y) in enumerate(path):
+        previous: tuple[int, int] | None = None
+        for x, y in path:
             cx = x * 2 + 1
             cy = y * 2 + 1
-            self._put(canvas, cx, cy, PATH)
-            if index == 0:
-                continue
-            old_x, old_y = path[index - 1]
-            old_cx = old_x * 2 + 1
-            old_cy = old_y * 2 + 1
-            self._put(
-                canvas,
-                (old_cx + cx) // 2,
-                (old_cy + cy) // 2,
-                PATH,
-            )
+            canvas[cy][cx] = PATH
+            if previous is not None:
+                old_x, old_y = previous
+                canvas[y + old_y + 1][x + old_x + 1] = PATH
+            previous = (x, y)
 
     def _pixel(self, value: int) -> str:
         """Convert a canvas value to colored text.
@@ -150,26 +126,25 @@ class AsciiView:
         """
         canvas_width = maze.width * 2 + 1
         canvas_height = maze.height * 2 + 1
-        canvas = [
-            [EMPTY for _ in range(canvas_width)]
-            for _ in range(canvas_height)
-        ]
+        canvas: list[list[int]] = []
+        for _ in range(canvas_height):
+            canvas.append([EMPTY] * canvas_width)
 
         self._draw_walls(maze, canvas)
         self._draw_pattern(maze, canvas)
         if path:
             self._draw_path(path, canvas)
-        self._put(
-            canvas, maze.entry[0] * 2 + 1, maze.entry[1] * 2 + 1, ENTRY
-        )
-        self._put(
-            canvas, maze.exit[0] * 2 + 1, maze.exit[1] * 2 + 1, EXIT
-        )
+        entry_x, entry_y = maze.entry
+        exit_x, exit_y = maze.exit
+        canvas[entry_y * 2 + 1][entry_x * 2 + 1] = ENTRY
+        canvas[exit_y * 2 + 1][exit_x * 2 + 1] = EXIT
 
-        lines = [
-            "".join(self._pixel(value) for value in row)
-            for row in canvas
-        ]
+        lines: list[str] = []
+        for row in canvas:
+            line = ""
+            for value in row:
+                line += self._pixel(value)
+            lines.append(line)
         return "\n".join(lines)
 
     def display(

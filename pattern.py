@@ -9,7 +9,7 @@ PATTERN: tuple[str, ...] = (
     "0010111",
 )
 
-PATTERN_CELLS = {
+PATTERN_CELLS: set[tuple[int, int]] = {
     (x, y)
     for y, row in enumerate(PATTERN)
     for x, value in enumerate(row)
@@ -42,7 +42,7 @@ def create_pattern(
         blocked = set()
     wanted_left = (width - pattern_width + 1) // 2
     wanted_top = (height - pattern_height) // 2
-    positions = [
+    positions: list[tuple[int, int]] = [
         (left, top)
         for top in range(1, height - pattern_height)
         for left in range(1, width - pattern_width)

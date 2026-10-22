@@ -50,7 +50,7 @@ class Controller:
             self.seed,
         )
         generator = MazeGenerator(settings)
-        blocked = {settings.entry, settings.exit}
+        blocked: set[tuple[int, int]] = {settings.entry, settings.exit}
         if not settings.perfect:
             blocked.add((settings.width // 2, settings.height // 2))
         pattern = create_pattern(settings.width, settings.height, blocked)
@@ -64,7 +64,9 @@ class Controller:
         if self.maze is None:
             return
         print("\033[2J\033[H", end="")
-        path = self.path if self.show_path else None
+        path: list[tuple[int, int]] | None = None
+        if self.show_path:
+            path = self.path
         self.view.display(self.maze, path)
         print()
         print(f"Seed: {self.seed} | Output: {self.output_file}")
@@ -82,7 +84,7 @@ class Controller:
                 return
             if command in ("q", "quit"):
                 return
-            if command in ("r", "regenerate"):
+            elif command in ("r", "regenerate"):
                 self.generate(True)
             elif command in ("p", "path"):
                 self.show_path = not self.show_path

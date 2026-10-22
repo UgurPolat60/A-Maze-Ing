@@ -30,13 +30,15 @@ def write_maze(
     for row in maze.grid:
         if len(row) != maze.width:
             raise FileWriteError("Maze row has an invalid width")
-        if any(type(cell) is not int or not 0 <= cell <= 15 for cell in row):
-            raise FileWriteError("Maze contains an invalid cell value")
-        lines.append("".join(format(cell, "X") for cell in row))
+        line = ""
+        for cell in row:
+            if type(cell) is not int or not 0 <= cell <= 15:
+                raise FileWriteError("Maze contains an invalid cell value")
+            line += format(cell, "X")
+        lines.append(line)
 
     if len(maze.grid) != maze.height:
         raise FileWriteError("Maze grid has an invalid height")
-    
     lines.append("")
     lines.append(f"{maze.entry[0]},{maze.entry[1]}")
     lines.append(f"{maze.exit[0]},{maze.exit[1]}")
