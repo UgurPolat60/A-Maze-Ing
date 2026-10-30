@@ -39,7 +39,7 @@ def val_type(input_type: type, check_value: str) -> typing.Any:
         try:
             return int(check_value)
         except ValueError as e:
-            raise ConfigError(f"Cannot convert to int: {check_value}") from e
+            raise ConfigError(f"Cannot convert to int: {check_value}")
 
     if input_type is bool:
         if check_value.lower() == "false":
@@ -60,7 +60,7 @@ def val_type(input_type: type, check_value: str) -> typing.Any:
         try:
             return (int(values[0].strip()), int(values[1].strip()))
         except ValueError as e:
-            raise ConfigError(f"Invalid coordinates: {check_value}") from e
+            raise ConfigError(f"Invalid coordinates: {check_value}")
 
     raise ConfigError("Unsupported configuration type")
 
@@ -79,7 +79,7 @@ def config_parser(path: str) -> dict[str, typing.Any]:
     """
     config: dict[str, typing.Any] = {}
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        with open(path, "r") as f:
             for line_number, line in enumerate(f, 1):
                 line = line.strip()
                 if not line or line.startswith("#"):
@@ -102,9 +102,9 @@ def config_parser(path: str) -> dict[str, typing.Any]:
                 try:
                     config[key] = val_type(KEY_LIST[key], value)
                 except ConfigError as e:
-                    raise ConfigError(f"Line {line_number}: {e}") from e
+                    raise ConfigError(f"Line {line_number}: {e}")
     except OSError as e:
-        raise ConfigError(f"Cannot read configuration file: {e}") from e
+        raise ConfigError(f"Cannot read configuration file: {e}")
 
     missing = REQUIRED_KEYS - set(config)
     if missing:

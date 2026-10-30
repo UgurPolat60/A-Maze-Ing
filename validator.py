@@ -34,7 +34,7 @@ def validate_config(
         perfect = config["PERFECT"]
         seed = config.get("SEED")
     except KeyError as e:
-        raise ValidationError(f"Missing mandatory key: {e.args[0]}") from e
+        raise ValidationError(f"Missing mandatory key: {e.args[0]}")
 
     if type(width) is not int or type(height) is not int:
         raise ValidationError("WIDTH and HEIGHT must be integers")
@@ -54,7 +54,7 @@ def validate_config(
             width, height, entry, exit_pos, perfect, seed
         )
     except (TypeError, ValueError) as e:
-        raise ValidationError(str(e)) from e
+        raise ValidationError(str(e))
     return settings, output_file
 
 
