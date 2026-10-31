@@ -38,7 +38,7 @@ def val_type(input_type: type, check_value: str) -> typing.Any:
     if input_type is int:
         try:
             return int(check_value)
-        except ValueError as e:
+        except ValueError:
             raise ConfigError(f"Cannot convert to int: {check_value}")
 
     if input_type is bool:
@@ -59,7 +59,7 @@ def val_type(input_type: type, check_value: str) -> typing.Any:
             raise ConfigError(f"Invalid coordinates: {check_value}")
         try:
             return (int(values[0].strip()), int(values[1].strip()))
-        except ValueError as e:
+        except ValueError:
             raise ConfigError(f"Invalid coordinates: {check_value}")
 
     raise ConfigError("Unsupported configuration type")

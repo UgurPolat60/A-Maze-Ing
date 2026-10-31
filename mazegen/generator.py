@@ -135,7 +135,8 @@ class MazeGenerator:
         Returns:
             The number of independent loops.
         """
-        cells:int = self.maze.width * self.maze.height - len(self.maze.pattern)
+        cells: int = self.maze.width * \
+            self.maze.height - len(self.maze.pattern)
         opened = 0
         for y in range(self.maze.height):
             for x in range(self.maze.width):
@@ -152,10 +153,13 @@ class MazeGenerator:
             rng: Random generator.
         """
         loops = self._count_loops()
-        candidates:list[tuple[int,int,int]] = [(x, y, direction)
-                      for y in range(self.maze.height)
-                      for x in range(self.maze.width)
-                      for direction in (EAST, SOUTH)]
+        candidates: list[tuple[int, int, int]] = [(x, y, direction)
+                                                  for y in
+                                                  range(self.maze.height)
+                                                  for x in
+                                                  range(self.maze.width)
+                                                  for direction
+                                                  in (EAST, SOUTH)]
         rng.shuffle(candidates)
         for x, y, direction in candidates:
             if loops >= MIN_LOOPS:

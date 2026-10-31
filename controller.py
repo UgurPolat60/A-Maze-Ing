@@ -27,6 +27,7 @@ class Controller:
         self.path: list[tuple[int, int]] = []
         self.show_path = False
         self.seed = settings.seed
+        self.message: str = ""
 
     def generate(self, new_seed: bool = False) -> None:
         """Generate, validate and save a maze.
@@ -71,6 +72,9 @@ class Controller:
         print()
         print(f"Seed: {self.seed} | Output: {self.output_file}")
         print("[R]egenerate  [P]ath  [C]olour  [Q]uit")
+        if self.message:
+            print(self.message)
+        self.message = ""
 
     def run(self) -> None:
         """Generate the first maze and start the interaction loop."""
@@ -91,4 +95,4 @@ class Controller:
             elif command in ("c", "colour", "color"):
                 self.view.change_color()
             else:
-                print("Unknown command. Use R, P, C or Q.")
+                self.message = "Unknown command. Use R, P, C or Q."
