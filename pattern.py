@@ -47,13 +47,16 @@ def create_pattern(
         for top in range(1, height - pattern_height)
         for left in range(1, width - pattern_width)
     ]
-    positions.sort(
-        key=lambda pos: (
+
+    def position_priority(pos: tuple[int, int]) -> tuple[int, int, int]:
+        """Order positions by distance from the center, then row and column."""
+        return (
             abs(pos[0] - wanted_left) + abs(pos[1] - wanted_top),
             pos[1],
             pos[0],
         )
-    )
+
+    positions.sort(key=position_priority)
 
     for left, top in positions:
         overlaps = any(
