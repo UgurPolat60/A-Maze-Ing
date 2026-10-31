@@ -2,3 +2,9 @@ __pycache__/
 .vscode/
 *.pdf
 *.png
+.mypy_cache/
+*.pyc
+env1/
+build/
+dist/
+*.egg-info/

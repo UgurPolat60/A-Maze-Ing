@@ -69,7 +69,11 @@ class Maze:
         Returns:
             The number of open walls.
         """
-        return sum(1 for d in DIRECTIONS if not self.is_wall(x, y, d))
+        count = 0
+        for d in DIRECTIONS:
+            if not self.is_wall(x, y, d):
+                count += 1
+        return count
 
     def close_wall(self, x: int, y: int, direction: int) -> None:
         """Close a wall of a cell and of its neighbour.
