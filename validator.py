@@ -44,6 +44,11 @@ def validate_config(
         raise ValidationError("ENTRY and EXIT must be coordinates")
     if type(perfect) is not bool:
         raise ValidationError("PERFECT must be True or False")
+    if not perfect and width == 2 and height == 2:
+        raise ValidationError(
+            "A 2x2 maze cannot contain the two loops required "
+            "for PERFECT=False. Increase WIDTH or HEIGHT."
+        )
     if type(output_file) is not str or not output_file:
         raise ValidationError("OUTPUT_FILE cannot be empty")
     if seed is not None and type(seed) is not int:

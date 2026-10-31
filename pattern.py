@@ -20,6 +20,7 @@ PATTERN_CELLS: set[tuple[int, int]] = {
 def create_pattern(
     width: int,
     height: int,
+    warnings: list[str],
     blocked: set[tuple[int, int]] | None = None,
 ) -> set[tuple[int, int]]:
     """Create the 42 pattern inside the maze.
@@ -27,6 +28,7 @@ def create_pattern(
     Args:
         width: Maze width.
         height: Maze height.
+        warnings: List to collect warning messages for the controller.
         blocked: Cells that cannot be part of the pattern.
 
     Returns:
@@ -35,7 +37,9 @@ def create_pattern(
     pattern_width = len(PATTERN[0])
     pattern_height = len(PATTERN)
     if width < pattern_width + 2 or height < pattern_height + 2:
-        print("Warning: maze is too small to display the 42 pattern")
+        warnings.append(
+            "Warning: maze is too small to display the 42 pattern"
+        )
         return set()
 
     if blocked is None:
@@ -67,5 +71,7 @@ def create_pattern(
                 for x, y in PATTERN_CELLS
             }
 
-    print("Warning: entry and exit leave no room for the 42 pattern")
+    warnings.append(
+        "Warning: entry and exit leave no room for the 42 pattern"
+    )
     return set()

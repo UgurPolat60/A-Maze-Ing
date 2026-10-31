@@ -10,6 +10,11 @@ from pattern import create_pattern
 from validator import validate_maze
 
 
+CLEAR_SCREEN = "\033[2J"
+MOVE_CURSOR_HOME = "\033[H"
+INVALID_COMMAND_WARNING = "Unknown command. Use R, P, C or Q."
+
+
 class Controller:
     """Keep the current maze and handle user commands."""
 
@@ -27,7 +32,7 @@ class Controller:
         self.path: list[tuple[int, int]] = []
         self.show_path = False
         self.seed = settings.seed
-        self.message: str = ""
+        self.warnings: list[str] = []
 
     def generate(self, new_seed: bool = False) -> None:
         """Generate, validate and save a maze.
@@ -54,7 +59,10 @@ class Controller:
         blocked: set[tuple[int, int]] = {settings.entry, settings.exit}
         if not settings.perfect:
             blocked.add((settings.width // 2, settings.height // 2))
-        pattern = create_pattern(settings.width, settings.height, blocked)
+        self.warnings.clear()
+        pattern = create_pattern(
+            settings.width, settings.height, self.warnings, blocked,
+        )
         self.maze = generator.generate(pattern)
         self.path = generator.solve()
         validate_maze(self.maze, settings.perfect)
@@ -64,7 +72,7 @@ class Controller:
         """Clear the terminal and display current state and controls."""
         if self.maze is None:
             return
-        print("\033[2J\033[H", end="")
+        print(CLEAR_SCREEN + MOVE_CURSOR_HOME, end="")
         path: list[tuple[int, int]] | None = None
         if self.show_path:
             path = self.path
@@ -72,9 +80,10 @@ class Controller:
         print()
         print(f"Seed: {self.seed} | Output: {self.output_file}")
         print("[R]egenerate  [P]ath  [C]olour  [Q]uit")
-        if self.message:
-            print(self.message)
-        self.message = ""
+        for warning in self.warnings:
+            print(warning)
+        if INVALID_COMMAND_WARNING in self.warnings:
+            self.warnings.remove(INVALID_COMMAND_WARNING)
 
     def run(self) -> None:
         """Generate the first maze and start the interaction loop."""
@@ -95,4 +104,4 @@ class Controller:
             elif command in ("c", "colour", "color"):
                 self.view.change_color()
             else:
-                self.message = "Unknown command. Use R, P, C or Q."
+                self.warnings.append(INVALID_COMMAND_WARNING)
