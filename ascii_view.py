@@ -1,7 +1,7 @@
 """Display a maze in the terminal."""
 
 from mazegen import Maze
-from mazegen.constants import EAST, SOUTH
+from mazegen.constants import NORTH, EAST, SOUTH, WEST
 
 
 RESET = "\033[0m"
@@ -49,14 +49,14 @@ class AsciiView:
 
         for y in range(maze.height):
             for x in range(maze.width):
+                if maze.is_wall(x, y, NORTH):
+                    canvas[y * 2][x * 2 + 1] = WALL
                 if maze.is_wall(x, y, EAST):
                     canvas[y * 2 + 1][x * 2 + 2] = WALL
                 if maze.is_wall(x, y, SOUTH):
                     canvas[y * 2 + 2][x * 2 + 1] = WALL
-                if y == 0:
-                    canvas[0][x * 2 + 1] = WALL
-                if x == 0:
-                    canvas[y * 2 + 1][0] = WALL
+                if maze.is_wall(x, y, WEST):
+                    canvas[y * 2 + 1][x * 2] = WALL
 
     def _draw_pattern(self, maze: Maze, canvas: list[list[int]]) -> None:
         """Fill the center of every 42 pattern cell.
