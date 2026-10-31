@@ -40,23 +40,22 @@ def create_pattern(
 
     if blocked is None:
         blocked = set()
-    wanted_left = (width - pattern_width + 1) // 2
-    wanted_top = (height - pattern_height) // 2
-    positions: list[tuple[int, int]] = [
-        (left, top)
-        for top in range(1, height - pattern_height)
-        for left in range(1, width - pattern_width)
-    ]
+    center = (
+        (width - pattern_width + 1) // 2,
+        (height - pattern_height) // 2,
+    )
+    positions: list[tuple[int, int]] = []
+    for top in range(1, height - pattern_height):
+        for left in range(1, width - pattern_width):
+            positions.append((left, top))
 
-    def position_priority(pos: tuple[int, int]) -> tuple[int, int, int]:
-        """Order positions by distance from the center, then row and column."""
-        return (
-            abs(pos[0] - wanted_left) + abs(pos[1] - wanted_top),
-            pos[1],
-            pos[0],
-        )
+    def distance_to_center(position: tuple[int, int]) -> int:
+        """Return the horizontal and vertical distance from the center."""
+        x, y = position
+        center_x, center_y = center
+        return abs(x - center_x) + abs(y - center_y)
 
-    positions.sort(key=position_priority)
+    positions.sort(key=distance_to_center)
 
     for left, top in positions:
         overlaps = any(
