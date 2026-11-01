@@ -5,6 +5,7 @@ from typing import Any
 
 from mazegen import Maze, MazeSettings
 from mazegen.constants import EAST, NORTH, SOUTH, WEST
+MAX_SIZE = 200
 
 
 class ValidationError(Exception):
@@ -40,6 +41,10 @@ def validate_config(
         raise ValidationError("WIDTH and HEIGHT must be integers")
     if width < 2 or height < 2:
         raise ValidationError("WIDTH and HEIGHT must be at least 2")
+    if width > MAX_SIZE or height > MAX_SIZE:
+        raise ValidationError(
+            f"WIDTH and HEIGHT must be at most {MAX_SIZE}"
+        )
     if not isinstance(entry, tuple) or not isinstance(exit_pos, tuple):
         raise ValidationError("ENTRY and EXIT must be coordinates")
     if type(perfect) is not bool:
